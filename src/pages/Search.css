@@ -1,0 +1,35 @@
+.search-page {
+  padding: 20px;
+  text-align: center;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 10px;
+  width: 300px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px;
+  margin-left: 10px;
+  font-size: 16px;
+}
+
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.movie-card {
+  width: 200px;
+  background: #1e1e1e;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+}
