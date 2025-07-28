@@ -12,10 +12,10 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <div className="container mt-4">
+      <div className="container mt-4 app-container">
         <Routes>
           <Route path="/" element={
-            <div className="p-5 mb-4 bg-light rounded-3">
+            <div className="p-5 mb-4 rounded-3 app-jumbotron">
               <div className="container-fluid py-5">
                 <h1 className="display-5 fw-bold">Welcome to Fickverse 🎬</h1>
                 <p className="col-md-8 fs-4">Your one-stop destination for movie recommendations, reviews, and ratings. Discover new movies, share your thoughts, and connect with other movie lovers.</p>

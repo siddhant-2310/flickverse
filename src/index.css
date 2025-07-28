@@ -1,13 +1,71 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #0A0A0A;
+  color: #F0F0F0;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: 'Fira Code', 'Menlo', 'Monaco', 'Consolas', 'Courier New',
     monospace;
+}
+
+.card {
+  background-color: #1A1A1A !important;
+  color: #F0F0F0 !important;
+  border: 1px solid #2C2C2C !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  color: #ffffff !important;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+
+.app-container {
+  background-color: #0A0A0A;
+  color: #F0F0F0;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.app-jumbotron {
+  background-color: #1A1A1A !important;
+  color: #F0F0F0 !important;
+  border: 1px solid #2C2C2C;
+  border-radius: 12px !important;
+  padding: 40px !important;
+  margin-bottom: 40px !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.app-jumbotron h1 {
+  font-weight: 700;
+  color: #F0F0F0;
+}
+
+.app-jumbotron p {
+  color: #B0B0B0;
+}
+
+.btn-primary {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
 }

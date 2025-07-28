@@ -48,6 +48,39 @@ def recommend():
         app.logger.error(f"An error occurred during recommendation: {e}")
         return jsonify({"error": "An internal error occurred."}), 500
 
+@app.route('/api/user_recommendations', methods=['POST'])
+def user_recommendations():
+    app.logger.info("User recommendations request received.")
+    if similarity is None:
+        app.logger.error("Recommendation model not loaded.")
+        return jsonify({"error": "Recommendation model not loaded."}), 500
+
+    data = request.get_json()
+    user_movies = data.get('titles', [])
+    app.logger.info(f"User's favorite movies: {user_movies}")
+
+    if not user_movies:
+        return jsonify({"error": "No movie titles provided."}), 400
+
+    all_recommendations = set()
+    for movie_title in user_movies:
+        if movie_title in movies['title'].values:
+            movie_index = movies[movies['title'] == movie_title].index[0]
+            distances = similarity[movie_index]
+            # Get top 10 for each
+            recommended_movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:11]
+            for i in recommended_movies_list:
+                all_recommendations.add(movies.iloc[i[0]].title)
+
+    # Remove movies the user has already seen
+    final_recommendations = [rec for rec in all_recommendations if rec not in user_movies]
+    
+    # Limit to a reasonable number of recommendations
+    final_recommendations = final_recommendations[:10]
+
+    app.logger.info(f"Final recommendations: {final_recommendations}")
+    return jsonify([{"title": title} for title in final_recommendations])
+
 @app.route('/api/test')
 def test_route():
     return jsonify({"message": "Hello from the recommendation backend!"})

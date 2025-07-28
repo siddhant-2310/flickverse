@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMovieDetails } from '../api/tmdb';
+import { getMovieDetails, searchMovies } from '../api/tmdb';
 import { getRecommendations } from '../api/recommendations';
 import StarRating from '../components/StarRating';
 import { db } from '../firebase';
@@ -22,6 +22,7 @@ const MoviePage = () => {
       try {
         const response = await getMovieDetails(id);
         setMovie(response.data);
+        setRecommendations([]); // Reset recommendations when movie changes
       } catch (error) {
         console.error('Error fetching movie details:', error);
       }
@@ -35,8 +36,13 @@ const MoviePage = () => {
 
     const fetchRecommendations = async () => {
       try {
-        const recommendedMovies = await getRecommendations(movie.title);
-        setRecommendations(recommendedMovies);
+        const recommendedTitles = await getRecommendations(movie.title);
+        const moviePromises = recommendedTitles.map(rec => searchMovies(rec.title));
+        const movieResponses = await Promise.all(moviePromises);
+        const detailedRecommendations = movieResponses
+          .map(res => res.data.results[0])
+          .filter(Boolean); // Filter out any undefined results
+        setRecommendations(detailedRecommendations);
       } catch (error) {
         console.error('Error fetching recommendations:', error);
       }
@@ -139,16 +145,16 @@ const MoviePage = () => {
         </div>
       </div>
 
-      <div className="mt-4">
-          <h4>Recommended for you</h4>
+      <div className="mt-5">
+          <h4 className="mb-3">Recommended for you</h4>
           {recommendations.length > 0 ? (
-              <ul className="list-group">
-                  {recommendations.map((rec, index) => (
-                      <li key={index} className="list-group-item">{rec.title}</li>
+              <div className="row">
+                  {recommendations.map((rec) => (
+                      <MovieCard key={rec.id} movie={rec} className="col-6 col-md-4 col-lg-2 mb-3" />
                   ))}
-              </ul>
+              </div>
           ) : (
-              <p>No recommendations available.</p>
+              <p>Loading recommendations...</p>
           )}
       </div>
     </div>

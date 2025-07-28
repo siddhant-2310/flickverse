@@ -11,12 +11,26 @@ input {
   padding: 10px;
   width: 300px;
   font-size: 16px;
+  background-color: #1A1A1A;
+  color: #E0E0E0;
+  border: 1px solid #2C2C2C;
+  border-radius: 4px;
 }
 
 button {
-  padding: 10px;
+  padding: 10px 15px;
   margin-left: 10px;
   font-size: 16px;
+  background-color: #007BFF;
+  color: #E0E0E0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056B3;
 }
 
 .results {
@@ -28,8 +42,8 @@ button {
 
 .movie-card {
   width: 200px;
-  background: #1e1e1e;
-  color: #fff;
+  background: #1A1A1A;
+  color: #F0F0F0;
   padding: 10px;
   border-radius: 8px;
 }

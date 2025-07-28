@@ -11,3 +11,13 @@ export const getRecommendations = async (title) => {
     throw error;
   }
 };
+
+export const getUserRecommendations = async (titles) => {
+  try {
+    const response = await axios.post(`${API_URL}/user_recommendations`, { titles });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user recommendations:', error);
+    throw error;
+  }
+};
