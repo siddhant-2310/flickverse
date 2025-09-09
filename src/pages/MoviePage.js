@@ -36,7 +36,12 @@ const MoviePage = () => {
 
     const fetchRecommendations = async () => {
       try {
-        const recommendedTitles = await getRecommendations(movie.title);
+        const response = await getRecommendations(movie.title);
+        // Extract matched title + recommendations array
+        const recommendedTitles = response.recommendations || [];
+        const matchedTitle = response.matched_title;
+        // Optional: show the matched title in console (or UI later)
+        console.log(`Input: ${movie.title}, matched with: ${matchedTitle}`);
         const moviePromises = recommendedTitles.map(rec => searchMovies(rec.title));
         const movieResponses = await Promise.all(moviePromises);
         const detailedRecommendations = movieResponses

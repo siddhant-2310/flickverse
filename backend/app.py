@@ -2,6 +2,7 @@ import pickle
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
+from difflib import get_close_matches
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allow all origins for API routes
@@ -27,26 +28,30 @@ def recommend():
     movie_title = data.get('title')
     app.logger.info(f"Movie title: {movie_title}")
 
-    if not movie_title or movie_title not in movies['title'].values:
-        app.logger.warning(f"Movie title '{movie_title}' not found or not provided.")
-        return jsonify({"error": "Movie title not found or not provided."}), 404
+    if not movie_title:
+        return jsonify({"error": "Movie title not provided."}), 400
 
-    try:
-        movie_index = movies[movies['title'] == movie_title].index[0]
-        distances = similarity[movie_index]
-        recommended_movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+    # ✅ Fuzzy match: find the closest title from the dataset
+    close_matches = get_close_matches(movie_title, movies['title'].values, n=1, cutoff=0.6)
+    if not close_matches:
+        return jsonify({"error": f"No similar movie found in dataset for '{movie_title}'."}), 404
 
-        recommended_movies = []
-        for i in recommended_movies_list:
-            recommended_movies.append({
-                "title": movies.iloc[i[0]].title
-            })
-        
-        app.logger.info(f"Recommendations found: {recommended_movies}")
-        return jsonify(recommended_movies)
-    except Exception as e:
-        app.logger.error(f"An error occurred during recommendation: {e}")
-        return jsonify({"error": "An internal error occurred."}), 500
+    matched_title = close_matches[0]
+    movie_index = movies[movies['title'] == matched_title].index[0]
+    distances = similarity[movie_index]
+    recommended_movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+
+    recommended_movies = []
+    for i in recommended_movies_list:
+        recommended_movies.append({
+            "title": movies.iloc[i[0]].title
+        })
+
+    app.logger.info(f"Input: {movie_title}, matched: {matched_title}, recommendations: {recommended_movies}")
+    return jsonify({
+        "matched_title": matched_title,
+        "recommendations": recommended_movies
+    })
 
 @app.route('/api/user_recommendations', methods=['POST'])
 def user_recommendations():
@@ -64,18 +69,22 @@ def user_recommendations():
 
     all_recommendations = set()
     for movie_title in user_movies:
-        if movie_title in movies['title'].values:
-            movie_index = movies[movies['title'] == movie_title].index[0]
-            distances = similarity[movie_index]
-            # Get top 10 for each
-            recommended_movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:11]
-            for i in recommended_movies_list:
-                all_recommendations.add(movies.iloc[i[0]].title)
+        # Fuzzy match for each user movie
+        close_matches = get_close_matches(movie_title, movies['title'].values, n=1, cutoff=0.6)
+        if not close_matches:
+            continue
+        matched_title = close_matches[0]
+        movie_index = movies[movies['title'] == matched_title].index[0]
+        distances = similarity[movie_index]
+        # Get top 10 for each
+        recommended_movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:11]
+        for i in recommended_movies_list:
+            all_recommendations.add(movies.iloc[i[0]].title)
 
     # Remove movies the user has already seen
     final_recommendations = [rec for rec in all_recommendations if rec not in user_movies]
     
-    # Limit to a reasonable number of recommendations
+    # Limit to 10 recommendations
     final_recommendations = final_recommendations[:10]
 
     app.logger.info(f"Final recommendations: {final_recommendations}")

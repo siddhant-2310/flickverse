@@ -60,12 +60,12 @@ code {
 }
 
 .btn-primary {
-  background-color: #000000 !important;
-  border-color: #000000 !important;
+  background-color: #007BFF !important;
+  border-color: #007BFF !important;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 .btn-primary:hover {
-  background-color: #000000 !important;
-  border-color: #000000 !important;
+  background-color: #0056B3 !important;
+  border-color: #0056B3 !important;
 }
